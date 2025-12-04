@@ -1,0 +1,3 @@
+cp ../../ld-linux-x86-64.so.2 ../../libc.so.6 ../../birds ../flag.txt .
+docker run -d -p 5558:5000 --name pwn-birds_7 --privileged $(docker build -q .)
+rm birds flag.txt ld-linux-x86-64.so.2 libc.so.6
