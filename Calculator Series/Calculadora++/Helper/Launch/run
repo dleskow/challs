@@ -1,0 +1,3 @@
+cp ../../ld-linux-x86-64.so.2 ../../libc.so.6 ../../calculator++ ../flag.txt .
+docker run -d -p 5562:5000 --name pwn-calculator_pp --privileged $(docker build -q .)
+rm calculator++ flag.txt ld-linux-x86-64.so.2 libc.so.6

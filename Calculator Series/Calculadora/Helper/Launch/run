@@ -1,0 +1,3 @@
+cp ../../calculator ../flag.txt .
+docker run -d -p 5561:5000 --name pwn-calculator --privileged $(docker build -q .)
+rm calculator flag.txt
