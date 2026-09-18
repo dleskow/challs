@@ -37,13 +37,13 @@
 	],
 	align(left)[
 		- *Arquivos*:
-		  - _chall.zip_
-		    - _chall_ (ELF)
-		    - _libc.so.6_
-		    - _ld-linux-x86-64.so.2_
-		    - _Dockerfile_
-		    - _run.sh_
-		    - _flag.txt_
+			- _chall.zip_
+				- #emph(chall) (ELF)
+				- _libc.so.6_
+				- _ld-linux-x86-64.so.2_
+				- _Dockerfile_
+				- _run.sh_
+				- _flag.txt_
 	]
 )
 
