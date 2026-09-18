@@ -1,6 +1,7 @@
 #import "styles/config.typ": setup_all
 
-// For IDA
+// ---------- Declare IDA variables here ----------
+// So it colours them as well
 #let local_vars = (
 	"savedregs",
 )
@@ -8,20 +9,21 @@
 	"notes",
 	"n_notes",
 )
-// For zsh and pwndbg
+
+// ---------- Define chall details here ----------
+// For chall info, zsh and pwndbg
 #let user = "dleskow"
 #let host = "ganesh"
-#let path = "/home/" + host + "/Ping/" + context document.title
+#let ctf = "Ping"
+#let chall = "Notes"
+#let path = "/home/" + host + "/" + ctf + "/" + context document.title
 // raw_size fixes the size of every code block, cant be overwritten, as long as I know
 #show: setup_all.with(user, host, path, local_vars: local_vars, global_vars: global_vars, raw_size: 7pt)
 
-// Document start
-
-#let ctf = "Ping"
-#let chall = "Notes"
+// ---------- Document start ----------
 #set document(title: chall)
 #title[Write-up: #context document.title]
-#align(right)[por _dleskow_]
+#align(right)[por #emph(user)]
 = Informações do chall
 #grid(
 	columns: 2,
