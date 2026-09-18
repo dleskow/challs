@@ -251,7 +251,6 @@
 		fill: Colors.bg,
 		inset: 10pt,
 		radius: 2pt,
-		width: auto,
 		pwndbg(path, txt)
 	)
 	body

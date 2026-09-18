@@ -10,6 +10,7 @@
 	body = setup_my_zsh(user, host, path, body)
 	body = setup_ida(local_vars: local_vars, global_vars: global_vars, body)
 	show raw.where(block:true): set text(size: raw_size)
+	show raw.where(block:true): set block(width: 100%)
 	// Title
 	show title: set align(center)
 	show title: set text(size: 22pt)
