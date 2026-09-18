@@ -143,7 +143,7 @@
 		- Alocar uma nota nesse lugar e vazar um endereço da stack;
 
 	+ Obter escrita diretamente sobre o endereço de retorno da _main_ e utilizar ROP para obter uma shell.
-		- Se temos os endereços da Libc, temos também da _system_ e de alguma string \"/bin/sh\" que esteja lá;
+		- Se temos os endereços da Libc, temos também da _system_ e de alguma string `/bin/sh` que esteja lá;
 
 		- Devemos ter um gadget para ajeitarmos os argumentos (rdi) para chamar a _system_;
 
@@ -191,7 +191,7 @@
 	
 	- A lista encadeada formada pelo _malloc_/_free_ guarda os endereços dos próximos _chunks_ de forma codificada: fazendo um XOR com o offset da heap sem os últimos 3 números hexadecimais (aka sem os últimos 12 bits), que é o próprio valor vazado na leitura da 1ª nota apagada.
 	
-	Para quem não está familiar com a gambiarra da linha 13 (de substrair e somar um valor esquisito), consiste em um método extremamente eficiente de se obter um offset de algo sem ter que realmente calculá-lo: você abre uma execução no GDB, subtrai o próprio valor vazado e soma o valor que você quer obter. É, essencialmente, o mesmo que substituir o valor que você tem pelo valor que você queria ter. Peguemos, para fins de exemplo, uma execução com os seguintes valores:
+	Para quem não está familiar com a gambiarra da linha `libc_addr = leaks[7] - 0x7fbf46407bb0 + 0x7fbf46220000` (substrair e somar um valor esquisito), consiste em um método extremamente eficiente de se obter um offset de algo sem ter que realmente calculá-lo: você abre uma execução no GDB, subtrai o próprio valor vazado e soma o valor que você quer obter. É, essencialmente, o mesmo que substituir o valor que você tem pelo valor que você queria ter. Peguemos, para fins de exemplo, uma execução com os seguintes valores:
 	
 	```pwndbg
 	Leak 7: 0x7f8240d7fbb0
@@ -340,7 +340,7 @@
 	payload += p64(system)
 	```
 	
-	Agora, com todos a postos, basta desencadear o payload: pegar a nota em RBP através do _malloc_, colocar o _payload_ lá e encerrar o programa, que chama _return 0_ e desencadeia o ROP:
+	Agora, com todos a postos, basta desencadear o ataque: pegar a nota em RBP através do _malloc_, colocar o _payload_ lá e encerrar o programa, que chama `return 0` e desencadeia o ROP:
 	
 	```python
 	# Send
