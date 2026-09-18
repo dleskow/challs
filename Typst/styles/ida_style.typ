@@ -1,5 +1,3 @@
-#import "colors.typ": Colors
-
 #let idaColors = (
 	bg:     rgb("2d2d2d"),
 	text:   rgb("ababab"),

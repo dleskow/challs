@@ -95,7 +95,7 @@
 	}
 	let sep = line.split("0x")
 	(pwndbgColors.blue)("0x" + sep.at(1) + "0x" + sep.at(2))
-	(pwndbgColors.normal)("0x" + sep.at(3).slice(0, 6) + "0x" + sep.at(4).slice(0, 6))
+	(pwndbgColors.normal)("0x" + sep.at(3).slice(0, 8) + "0x" + sep.at(4).slice(0, 8))
 	sep = sep.at(4).slice(17)
 	(pwndbgColors.normal)(sep.slice(0, 5))
 	if "home" in sep.slice(5) {
