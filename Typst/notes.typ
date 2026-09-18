@@ -8,14 +8,17 @@
 	"notes",
 	"n_notes",
 )
+// For zsh and pwndbg
 #let user = "dleskow"
 #let host = "ganesh"
 #let path = "/home/" + host + "/Ping/Notes"
 // raw_size fixes the size of every code block, cant be overwritten, as long as I know
 #show: setup_all.with(user, host, path, local_vars: local_vars, global_vars: global_vars, raw_size: 7pt)
 
-#set document(title: [Write-up: Notes])
-#title()
+// Document start
+
+#set document(title: [Notes])
+#title[Write-up: #context document.title]
 #align(right)[por _dleskow_]
 = Informações do chall
 #grid(

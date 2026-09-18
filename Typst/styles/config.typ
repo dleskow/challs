@@ -21,18 +21,20 @@
 			let next_ones = query(selector(heading).after(here()))
 			let next_here = next_ones.filter(h => h.location().page() == here().page())
 			let heading = none
+			let chall = emph("chall: ") + document.title
 			if next_here.len() > 0 {
 				heading = next_here.first().body
-				if here().page() == 1 {
-					heading = document.title
-				}
 			} else if prev_ones.len() > 0 {
 				heading = prev_ones.last().body
 			}
+			if here().page() == 1 {
+				chall = none
+				heading = "Write-up: " + document.title
+			}
 			grid(
-				columns: (auto, 1fr),
-				// align(left + horizon, document.title),
+				columns: (1fr, auto, 1fr),
 				image("ganesh.svg", height: 3em),
+				align(center + horizon, chall),
 				align(right + horizon, heading)
 			)
 		},
