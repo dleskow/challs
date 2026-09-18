@@ -11,13 +11,15 @@
 // For zsh and pwndbg
 #let user = "dleskow"
 #let host = "ganesh"
-#let path = "/home/" + host + "/Ping/Notes"
+#let path = "/home/" + host + "/Ping/" + context document.title
 // raw_size fixes the size of every code block, cant be overwritten, as long as I know
 #show: setup_all.with(user, host, path, local_vars: local_vars, global_vars: global_vars, raw_size: 7pt)
 
 // Document start
 
-#set document(title: [Notes])
+#let ctf = "Ping"
+#let chall = "Notes"
+#set document(title: chall)
 #title[Write-up: #context document.title]
 #align(right)[por _dleskow_]
 = Informações do chall
@@ -25,7 +27,7 @@
 	columns: 2,
 	align(left)[
 		- *Título*:
-			Ping/Notes
+			#ctf/#chall
 		- *Autor*:
 			Tavares
 		- *Contexto*:
