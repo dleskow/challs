@@ -88,7 +88,7 @@
 	(pwndbgColors.normal)(">\n")
 }
 
-#let info_process_mapping(line) = {
+#let info_process_mapping(path, line) = {
 	if not "0x" in line {
 		(pwndbgColors.normal)(line + "\n")
 		return
@@ -98,14 +98,22 @@
 	(pwndbgColors.normal)("0x" + sep.at(3).slice(0, 6) + "0x" + sep.at(4).slice(0, 6))
 	sep = sep.at(4).slice(17)
 	(pwndbgColors.normal)(sep.slice(0, 5))
-	(pwndbgColors.green)(sep.slice(5))
+	if "home" in sep.slice(5) {
+		sep = sep.slice(5).split("/")
+		(pwndbgColors.green)(path + "/" + sep.last())
+	} else {
+		(pwndbgColors.green)(sep.slice(5))
+	}
 	"\n"
 }
 
-#let checksec(line) = {
+#let checksec(path, line) = {
 	let sep = line.split(":")
 	(pwndbgColors.normal)(sep.at(0) + ":")
-	if "Arch" in line or "File" in line {
+	if "File" in line {
+		sep = sep.at(1).split("/")
+		(pwndbgColors.normal)(sep.at(0) + path + "/" + sep.last())
+	} else if "Arch" in sep.at(1) {
 		(pwndbgColors.normal)(sep.at(1))
 	} else if "No" in sep.at(1) {
 		(pwndbgColors.red)(sep.at(1))
@@ -175,7 +183,7 @@
 	((pwndbgColors.normal)(line) + "\n", Commands.other)
 }
 
-#let pwndbg(output) = {
+#let pwndbg(path, output) = {
 	let command = Commands.no
 	let txt
 	let line_count = 0
@@ -206,7 +214,7 @@
 				continue
 			}
 			line_count += 1
-			info_process_mapping(line)
+			info_process_mapping(path, line)
 		} else if command == Commands.checksec {
 			if line_count > 6 or (line_count > 5 and not line.at(0) == "S") {
 				line_count = 0
@@ -215,7 +223,7 @@
 				continue
 			}
 			line_count += 1
-			checksec(line)
+			checksec(path, line)
 		} else if command == Commands.breakpoint {
 			if line_count >= 1 {
 				line_count = 0
@@ -238,13 +246,13 @@
 	}
 }
 
-#let setup_pwndbg(body) = {
+#let setup_pwndbg(path, body) = {
 	show raw.where(lang: "pwndbg"): txt => block(
 		fill: Colors.bg,
 		inset: 10pt,
 		radius: 2pt,
 		width: auto,
-		pwndbg(txt)
+		pwndbg(path, txt)
 	)
 	body
 }

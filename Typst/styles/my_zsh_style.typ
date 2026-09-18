@@ -82,7 +82,7 @@
 	"\n"
 }
 
-#let parse_command(line) = {
+#let parse_command(user, host, path, line) = {
 	if line.len() == 0 {
 		("\n", Commands.no)
 		return
@@ -114,9 +114,9 @@
 		return
 	}
 	let txt = (zshColors.user_blue)("┌──(")
-	txt += (zshColors.user_red)("dleskow" + "㉿" + "ganesh")
+	txt += (zshColors.user_red)(user + "㉿" + host)
 	txt += (zshColors.user_blue)(")-[")
-	txt += (zshColors.white)("/home/ganesh/Ping/Notes")
+	txt += (zshColors.white)(path)
 	txt += (zshColors.user_blue)("]\n└─")
 	txt += (zshColors.user_red)("# ")
 	if "sudo" in words.at(0) {
@@ -147,24 +147,24 @@
 	return
 }
 
-#let my_zsh(output) = {
+#let my_zsh(user, host, path, output) = {
 	let command = Commands.no
 	let txt
 	let line_count = 0
 	for line in output.text.split("\n") {
 		if command == Commands.no {
-			(txt, command) = parse_command(line)
+			(txt, command) = parse_command(user, host, path, line)
 			txt
 		} else if command == Commands.xxd {
 			if line.len() == 0 or not line.at(0) == "0" {
-				(txt, command) = parse_command(line)
+				(txt, command) = parse_command(user, host, path, line)
 				txt
 				continue
 			}
 			xxd(line)
 		} else if command == Commands.other {
 			if line.len() == 0 or "C:\\" in line or "└─#" in line {
-				(txt, command) = parse_command(line)
+				(txt, command) = parse_command(user, host, path, line)
 				txt
 				continue
 			}
@@ -173,13 +173,13 @@
 	}
 }
 
-#let setup_my_zsh(body) = {
+#let setup_my_zsh(user, host, path, body) = {
 	show raw.where(lang: "my_zsh"): txt => block(
 		fill: Colors.bg,
 		inset: 10pt,
 		radius: 2pt,
 		width: auto,
-		my_zsh(txt)
+		my_zsh(user, host, path, txt)
 	)
 	body
 }
