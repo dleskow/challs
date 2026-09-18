@@ -39,13 +39,13 @@
 	],
 	align(left)[
 		- *Arquivos*:
-		  - _Notes.zip_
-		    - _notes_ (ELF)
-		    - _libc.so.6_
-		    - _ld-linux-x86-64.so.2_
-		    - _Dockerfile_
-		    - _run.sh_
-		    - _flag.txt_
+			- _Notes.zip_
+				- _notes_ (ELF)
+				- _libc.so.6_
+				- _ld-linux-x86-64.so.2_
+				- _Dockerfile_
+				- _run.sh_
+				- _flag.txt_
 	]
 )
 
