@@ -9,7 +9,8 @@
 
 #let setup_ida(local_vars: (), global_vars: (), body) = {
 	show raw.where(lang: "ida"): txt => {
-	let new_text = txt.text.replace(regex("// ([^\[](.*\n\s*\/\/)*.*)"), m => "/* " + m.captures.at(0).replace("//", " *") + "\n" + 24*"\t" + " */")
+	// Not works if one char comments, but come one
+	let new_text = txt.text.replace(regex("// ([^\[].[^x](.*\n\s*\/\/)*.*)"), m => "/* " + m.captures.at(0).replace("//", " *") + "\n" + 24*"\t" + " */")
 		block(
 			fill: idaColors.bg,
 			inset: 10pt,
