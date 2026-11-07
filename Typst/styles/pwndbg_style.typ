@@ -1,14 +1,21 @@
 #import "colors.typ": Colors
 
 #let pwndbgColors = (
-	normal:     txt => text(fill: rgb("ffffff"), txt),
-	pwndbg:     txt => text(weight: "bold", fill: rgb("47d4b9"), txt),
-	white:      txt => text(weight: "bold", fill: rgb("ffffff"), txt),
-	red:        txt => text(fill: rgb("d41919"), txt),
-	orange:     txt => text(fill: rgb("fea44c"), txt),
-	green:      txt => text(fill: rgb("5ebdab"), txt),
-	light_blue: txt => text(fill: rgb("49aee6"), txt),
-	blue:       txt => text(fill: rgb("367bf0"), txt),
+	normal:          txt => text(fill: rgb("ffffff"), txt),
+	pwndbg:          txt => text(weight: "bold", fill: rgb("47d4b9"), txt),
+	white:           txt => text(weight: "bold", fill: rgb("ffffff"), txt),
+	red:             txt => text(fill: rgb("d41919"), txt),
+	red_bold:        txt => text(weight: "bold", fill: rgb("d41919"), txt),
+	orange:          txt => text(fill: rgb("fea44c"), txt),
+	green:           txt => text(fill: rgb("5ebdab"), txt),
+	green_aqua_bold: txt => text(weight: "bold", fill: rgb("47d4b9"), txt),
+	green_leaf_bold: txt => text(weight: "bold", fill: rgb("afd700"), txt),
+	green_leaf:      txt => text(fill: rgb("afd700"), txt),
+	green_comment:   txt => text(weight: "bold", fill: rgb("198388"), txt),
+	light_blue:      txt => text(fill: rgb("49aee6"), txt),
+	light_blue_2:    txt => text(fill: rgb("5fd7ff"), txt),
+	blue:            txt => text(fill: rgb("367bf0"), txt),
+	purple:          txt => text(fill: rgb("af87ff"), txt),
 )
 
 #let hexdump_get_color(byte) = {
@@ -132,6 +139,88 @@
 	"\n"
 }
 
+#let disasm_words = (
+	"rbp",
+	"ebp",
+	"rdi",
+	"edi",
+	"rsi",
+	"esi",
+	"rax",
+	"eax",
+	"rbx",
+	"ebx",
+	"bl",
+	"rcx",
+	"ecx",
+	"ch",
+	"rdx",
+	"edx",
+	"ptr",
+	"byte",
+	"qword",
+	"dword",
+)
+
+#let disasm(line) = {
+	if "0x" not in line {
+		(pwndbgColors.normal)(line)
+		"\n"
+		return
+	}
+
+	let addr = line.match(regex("0x[^\s]*"))
+	if "►" in line {
+		(pwndbgColors.normal)("► ")
+		(pwndbgColors.green_aqua_bold)(addr.text)
+	} else {
+		(pwndbgColors.normal)("  " + addr.text)
+	}
+	line = line.slice(addr.end)
+
+	let op = line.match(regex("\w+"))
+	if "j" in op.text or op.text == "call" or op.text == "ret" {
+		(pwndbgColors.green_leaf_bold)("  " + op.text)
+	} else {
+		(pwndbgColors.green_leaf)("  " + op.text)
+	}
+	(pwndbgColors.normal)((7 - op.text.len()) * " ")
+	line = line.slice(op.end)
+
+	if line.len() <= 5 {
+		"\n"
+		return
+	}
+
+	line = line.slice(line.match(regex("[\s]{1,8}")).end)
+	let split = line.match(regex("\s{2,}"))
+	let asm = line
+	let obs = none
+	let comments = none
+	if split != none {
+		asm = line.slice(0, split.start)
+		obs = line.slice(split.end - 1)
+		if "//" in obs {
+			comments = "//" + obs.split("//").at(1)
+			obs = obs.split("//").at(0)
+		}
+	}
+
+	{
+		show regex("[0-9][0-9a-fx]*"): txt => (pwndbgColors.purple)(txt)
+		show regex("\b(" + disasm_words.join("|") + ")\b"): txt => (pwndbgColors.light_blue_2)(txt)
+		(pwndbgColors.normal)(asm)
+	}
+	{
+		show regex("(?i)\b(" + disasm_words.join("|") + ")\b"): txt => (pwndbgColors.red_bold)(txt)
+		show regex("<Cannot dereference.*>"): txt => (pwndbgColors.red)(txt)
+		(pwndbgColors.normal)(7*" " + obs)
+	}
+	(pwndbgColors.green_comment)(comments)
+
+	"\n"
+}
+
 #let Commands = (
 	no:                   0,
 	hexdump:              1,
@@ -139,7 +228,8 @@
 	info_process_mapping: 3,
 	checksec:             4,
 	breakpoint:           5,
-	other:                6,
+	ctx_disasm:           6,
+	other:                7,
 )
 
 #let parse_command(line) = {
@@ -178,6 +268,9 @@
 		txt += (pwndbgColors.normal)(line)
 		txt += "\n"
 		(txt, command)
+		return
+	} else if "DISASM" in line {
+		((pwndbgColors.blue)(line) + "\n", Commands.ctx_disasm)
 		return
 	}
 	((pwndbgColors.normal)(line) + "\n", Commands.other)
@@ -233,8 +326,15 @@
 			}
 			line_count += 1
 			breakpoint(line)
+		} else if command == Commands.ctx_disasm {
+			if "pwndbg" in line  or "-----" in line {
+				(txt, command) = parse_command(line)
+				txt
+				continue
+			}
+			disasm(line)
 		} else if command == Commands.other {
-			if "pwndbg" in line {
+			if "pwndbg" in line  or "-----" in line {
 				line_count = 0
 				(txt, command) = parse_command(line)
 				txt
