@@ -4,13 +4,14 @@
 	cyan:   rgb("00ffff"),
 	yellow: rgb("ffd200"),
 	bege:   rgb("ffecbb"),
+	pink:   rgb("ff5afd"),
 )
 
 
-#let setup_ida(local_vars: (), global_vars: (), body) = {
+#let setup_ida(local_vars: (), global_vars: (), lib_functs: (), body) = {
 	show raw.where(lang: "ida"): txt => {
 	// Not works if one char comments, but come one
-	let new_text = txt.text.replace(regex("// ([^\[].[^x](.*\n\s*\/\/)*.*)"), m => "/* " + m.captures.at(0).replace("//", " *") + "\n" + 24*"\t" + " */")
+	let new_text = txt.text.replace(regex("// ([^\[].[^x](.*\n\s*\/\/)*.*)"), m => "/* " + m.captures.at(0).replace("//", " *") + " */")
 		block(
 			fill: idaColors.bg,
 			inset: 10pt,
@@ -19,6 +20,7 @@
 			text(fill: idaColors.text, {
 				show regex("\b(" + local_vars.join("|") + ")\b"): set text(fill: idaColors.cyan)
 				show regex("\b(" + global_vars.join("|") + ")\b"): set text(fill: idaColors.bege)
+				show regex("\b(" + lib_functs.join("|") + ")\b"): set text(fill: idaColors.pink)
 				show regex("\b([va]\d+)\b"): set text(fill: idaColors.cyan)
 				show regex("\b([si])\b"): set text(fill: idaColors.cyan)
 				show regex("\b(buf)\b"): set text(fill: idaColors.cyan)

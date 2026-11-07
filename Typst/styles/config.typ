@@ -3,12 +3,12 @@
 #import "my_zsh_style.typ": setup_my_zsh
 #import "ida_style.typ": setup_ida
 
-#let setup_all(user, host, path, local_vars: (), global_vars: (), raw_size: 7pt, body) = {
+#let setup_all(user, host, path, local_vars: (), global_vars: (), lib_functs: (), raw_size: 7pt, body) = {
 	// Raw blocks
 	body = setup_python(body)
 	body = setup_pwndbg(path, body)
 	body = setup_my_zsh(user, host, path, body)
-	body = setup_ida(local_vars: local_vars, global_vars: global_vars, body)
+	body = setup_ida(local_vars: local_vars, global_vars: global_vars, lib_functs: lib_functs, body)
 	show raw.where(block:true): set text(size: raw_size)
 	show raw.where(block:true): set block(width: 100%)
 	// Title
@@ -39,7 +39,8 @@
 				align(right + horizon, heading)
 			)
 		},
-		footer: align(right+horizon, context counter(page).display()))
+		footer: align(right+horizon, context counter(page).display())
+	)
 	// Sections
 	show heading.where(level: 1): set text(size: 16pt)
 	show heading.where(level: 2): set text(size: 14pt)
@@ -51,6 +52,7 @@
 	show ref: it => {
 		let el = it.element
 		if el == none { return it }
+		if el.func() == align { el = el.body }
 		link(
 			el.location(), 
 			// Links and numbers, remove the dot at the end
