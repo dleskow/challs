@@ -67,13 +67,13 @@
 	  }
 	  else if ( (unsigned __int16)a3 == 1003 )
 	  {
-	    dword_4084D0 = GetDlgItemInt(hDlg, 1002, 0, 0);// Reads long long int to 0x4084d0
+	    dword_4084D0 = GetDlgItemInt(hDlg, 1002, 0, 0); // Lê long long int para 0x4084d0
+	    sub_40466F();                                   // Função não analisável, mas muito usada
+	    ((void (__cdecl *)(void *))sub_404689)(&loc_40469F);
+	    *(_DWORD *)sub_40466F = 0xC39000C6;             // opcode: muda o próprio código durante execução
 	    sub_40466F();
-	    ((void (__cdecl *)(void *))sub_404689)(&loc_40469F);// Increments input?
-	    *(_DWORD *)sub_40466F = 0xC39000C6;         // opcode: changes code during execution
 	    sub_40466F();
-	    sub_40466F();
-	    *(_DWORD *)sub_40466F = 0x6E8;              // Again
+	    *(_DWORD *)sub_40466F = 0x6E8;                  // De novo
 	    return 1;
 	  }
 	  else
