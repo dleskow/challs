@@ -162,13 +162,21 @@
 	"dword",
 )
 
-#let disasm(line) = {
-	if "0x" not in line {
+#let ctx_disasm(line) = {
+	// Linha com instrução
+	if line.len() < 10 or "0x" not in line.slice(0, 10) {
+		let comments
+		if "//" in line {
+			comments = "//" + line.split("//").at(1)
+			line = line.split("//").at(0)
+		}
 		(pwndbgColors.normal)(line)
+		(pwndbgColors.green_comment)(comments)
 		"\n"
 		return
 	}
 
+	// Possui ênfase ►
 	let addr = line.match(regex("0x[^\s]*"))
 	if "►" in line {
 		(pwndbgColors.normal)("► ")
@@ -178,11 +186,19 @@
 	}
 	line = line.slice(addr.end)
 
+	// Pega instrução
 	let op = line.match(regex("\w+"))
 	if "j" in op.text or op.text == "call" or op.text == "ret" {
-		(pwndbgColors.green_leaf_bold)("  " + op.text)
+		if "✔" in line {
+			(pwndbgColors.green)(" ✔ ")
+		} else if "✘" in line {
+			(pwndbgColors.red)(" ✘ ")
+		} else {
+			(pwndbgColors.green_leaf_bold)("   ")
+		}
+		(pwndbgColors.green_leaf_bold)(op.text)
 	} else {
-		(pwndbgColors.green_leaf)("  " + op.text)
+		(pwndbgColors.green_leaf)("   " + op.text)
 	}
 	(pwndbgColors.normal)((7 - op.text.len()) * " ")
 	line = line.slice(op.end)
@@ -229,7 +245,8 @@
 	checksec:             4,
 	breakpoint:           5,
 	ctx_disasm:           6,
-	other:                7,
+	ctx_backtrace:        7,
+	other:                8,
 )
 
 #let parse_command(line) = {
@@ -271,6 +288,9 @@
 		return
 	} else if "DISASM" in line {
 		((pwndbgColors.blue)(line) + "\n", Commands.ctx_disasm)
+		return
+	} else if "BACKTRACE" in line {
+		((pwndbgColors.blue)(line) + "\n", Commands.ctx_backtrace)
 		return
 	}
 	((pwndbgColors.normal)(line) + "\n", Commands.other)
@@ -332,7 +352,14 @@
 				txt
 				continue
 			}
-			disasm(line)
+			ctx_disasm(line)
+		} else if command == Commands.ctx_backtrace {
+			if "pwndbg" in line  or "-----" in line {
+				(txt, command) = parse_command(line)
+				txt
+				continue
+			}
+			(pwndbgColors.normal)(line + "\n")
 		} else if command == Commands.other {
 			if "pwndbg" in line  or "-----" in line {
 				line_count = 0

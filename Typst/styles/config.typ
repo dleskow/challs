@@ -2,9 +2,11 @@
 #import "pwndbg_style.typ": setup_pwndbg
 #import "my_zsh_style.typ": setup_my_zsh
 #import "ida_style.typ": setup_ida
+#import "c_style.typ": setup_c
 
 #let setup_all(user, host, path, local_vars: (), global_vars: (), lib_functs: (), raw_size: 7pt, body) = {
 	// Raw blocks
+	body = setup_c(body)
 	body = setup_python(body)
 	body = setup_pwndbg(path, body)
 	body = setup_my_zsh(user, host, path, body)
